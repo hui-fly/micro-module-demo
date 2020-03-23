@@ -43,7 +43,6 @@
                     @row-click="handleClickRow"
                     ref="eltableCurrentRow"
                 >
-                    <el-table-column label="排序" prop="sort"></el-table-column>
                     <el-table-column label="任务名" prop="title"></el-table-column>
                     <el-table-column label="任务惟一标识" prop="task_name"></el-table-column>
                     <el-table-column label="任务ID" prop="task_id"></el-table-column>
@@ -77,7 +76,7 @@
             class="pagination"
             @current-change="handleCurrentChange"
             :current-page.sync="currentPage"
-            :page-size="20"
+            :page-size="15"
             layout="total, prev, pager, next"
             :total="totalCount"
         ></el-pagination>
@@ -85,17 +84,10 @@
 </template>
 
 <script>
-import api from '@/core/Apis/taskApi';
-
 export default {
     components: {},
     data () {
         return {
-            app_id: '',
-            editOrAdd: '',
-            formData: {},
-            form: {},
-            dialog: false,
             tableData: [
                 {
                     title: '',
@@ -104,90 +96,40 @@ export default {
                     task_cycle: ''
                 }
             ],
-            recordDialog: false,
-            recordList: [
-                {
-                    new_value: {}
-                }
-            ],
             filterParams: {
                 page: 1,
-                page_size: 20,
+                page_size: 15,
                 title: '',
                 task_status: '',
                 task_cycle: ''
             },
-            dialogVisible: false,
-            selectContent: [],
-            checkList_content: [],
-            url: '',
-            visible: false,
             list: [],
             currentPage: 1,
             totalCount: 10,
             currentType: 1,
             tableLoading: false,
-            flag: false,
-            checkList: [],
-            operatorInfo: {}
+            flag: false
         };
     },
     computed: {},
     watch: {},
-    created () {
-        this.getMemberInfo();
-    },
     // 生命周期 - 挂载完成（可以访问DOM元素）
     mounted () {
-        this.app_id = this.$util.getId();
         this.getTaskList();
     },
     methods: {
-        showRecord (row) {
-            this.getRecord(row.task_id).then(_ => {
-                this.recordDialog = true;
-            });
-        },
-        getMemberInfo () {
-            let memberInfo = {};
-            // JSON.parse(localStorage.getItem('userInfo')).data;
-            this.operatorInfo = {
-                admin_name: memberInfo.name,
-                admin_id: Number(memberInfo.id)
-            };
-            this.formData.admin_name = this.operatorInfo.admin_name;
-        },
-        getRecord (id) {
-            return this.$api.send(api.getRecord, { task_id: id }).then(res => {
-                console.log(res);
-                this.recordList = res.data.list;
-                this.recordList.forEach(item => {
-                    try {
-                        item.new_value = JSON.parse(item.new_value);
-                    } catch (error) {
-                        // item.new_value = this.recordList[0].new_value;
-                    }
-                });
-                console.log(111, this.recordList);
-            });
-        },
-        close () {
-            this.dialog = false;
-            this.getTaskList();
-        },
         editTask (row) {},
         addTask () {},
+        handelDel (task) {},
         getTaskList (type) {
             if (type === 'cx') {
                 this.filterParams.page = 1;
             }
-            this.filterParams.app_id = this.app_id;
             let params = {
-                ...this.filterParams,
-                page_size: 20
+                ...this.filterParams
             };
             this.tableLoading = true;
-            this.$api.send(api.getTaskList, params).then(res => {
+            this.$mapi.getTaskList(params).then(res => {
                 this.tableLoading = false;
                 let list = res.data.list;
                 this.totalCount = res.data.total;
@@ -204,20 +146,13 @@ export default {
                 this.tableData = list;
             });
         },
-        handelDel (task) {
-            /* eslint-disable */
-        },
-        handleCurrentChange(page) {
+        handleCurrentChange (page) {
             this.currentPage = page;
             this.filterParams.page = page;
             this.getTaskList();
         },
-        handleSelectionChange(val) {
-            const list = val.map(item => item.id);
-            this.checkList = list;
-            this.selectContent = val;
-        },
-        handleClickRow(row, col, event) {
+        handleSelectionChange (val) {},
+        handleClickRow (row, col, event) {
             this.flag = !this.flag;
             this.$refs.eltableCurrentRow.toggleRowSelection(row, this.flag);
         }
@@ -225,10 +160,6 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-.el-table__header-wrapper {
-    position: sticky !important;
-    top: 0;
-}
 .page {
     width: 100%;
     .container {
@@ -238,6 +169,15 @@ export default {
         box-sizing: border-box;
         margin-bottom: 40px;
     }
+    .pagination {
+        position: fixed;
+        width: 100%;
+        left: 0;
+        bottom: 20px;
+        text-align: right;
+        background: #fff;
+        z-index: 10;
+    }
 }
 .btns {
     button {
@@ -245,14 +185,5 @@ export default {
         padding: 3px 0;
         margin: 0 5px;
     }
-}
-.pagination {
-    position: fixed;
-    width: 100%;
-    left: 0;
-    bottom: 20px;
-    text-align: right;
-    background: #fff;
-    z-index: 10;
 }
 </style>

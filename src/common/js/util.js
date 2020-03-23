@@ -1,11 +1,5 @@
-import Cookies from 'js-cookie';
-
 let SIGN_REGEXP = /([yMdhsm])(\1*)/g;
 let DEFAULT_PATTERN = 'yyyy-MM-dd';
-const QU_LOCAL_PERMS = 'qu_local_perms';
-const project = 'md-admin';
-
-const TOKEN_KEY = 'ewx-perm-token';
 
 function padding (s, len) {
     len = len - (s + '').length;
@@ -16,11 +10,6 @@ function padding (s, len) {
 }
 
 export default {
-    getToken () {
-        const token = Cookies.get(TOKEN_KEY);
-        if (token) return token;
-        else return false;
-    },
     getQueryStringByName (name) {
         let reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
         let r = window.location.search.substr(1).match(reg);
@@ -114,97 +103,6 @@ export default {
         }
         return args;
     },
-    getPermUrl: function permUrl (menu = [], uris = []) {
-        menu.forEach(menuItem => {
-            let { meta = {} } = menuItem;
-            if (meta.api) {
-                let appId;
-                try {
-                    appId = window.localStorage.getItem('appId');
-                } catch (e) {}
-                meta.api.forEach(perm => {
-                    uris.push(`${project}::/app_${appId}${perm}`);
-                });
-            }
-            if (menuItem.children) {
-                permUrl(menuItem.children, uris);
-            }
-        });
-        return uris;
-    },
-    savePermApi (perms) {
-        localStorage.setItem(QU_LOCAL_PERMS, JSON.stringify(perms));
-    },
-    checkPermApi (map) {
-        let localPerms = [];
-        try {
-            localPerms = JSON.parse(localStorage.getItem(QU_LOCAL_PERMS)) || [];
-        } catch (err) {}
-
-        map.forEach(item => {
-            if (item.children) {
-                item.children.forEach(child => {
-                    let apiList = child.meta.api || [];
-                    let isHidden = true;
-                    for (let i = 0, len = apiList.length; i < len; i++) {
-                        let uri = apiList[i];
-                        let key = `${project}::/app_${this.getId()}${uri}`;
-                        if (localPerms[key] && localPerms[key].has === 1 && child.meta.hidden === false) {
-                            isHidden = false;
-                        } else {
-                            isHidden = true;
-                            break;
-                        }
-                        // // console.log(key, isHidden);
-                    }
-                    child.meta.hidden = isHidden;
-                });
-            }
-        });
-        return map;
-    },
-    validatePermission (paths) {
-        let localPerms = [];
-        try {
-            localPerms = JSON.parse(localStorage.getItem(QU_LOCAL_PERMS)) || [];
-        } catch (err) {}
-        for (let item of paths) {
-            const list = [];
-            list.push(project + '::' + item);
-            list.push(project + '::' + `/app_${this.getId()}${item}`);
-            for (let key of list) {
-                if (localPerms[key] && localPerms[key].has === 1) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    },
-    goBack (_this) {
-        _this
-            .$confirm('您的操作将不会保存，确定离开?', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-            })
-            .then(() => {
-                _this.$router.go(-1);
-            })
-            .catch(() => {});
-    },
-    setTableHeight (_this, decContainerHeight, decTableHeight) {
-        _this.$nextTick(() => {
-            const home = document.querySelector('#test');
-            if (!home) return;
-            const wrapHeight = home.clientHeight;
-            let container = _this.$refs.container;
-            if (container) {
-                container.style.height = wrapHeight - decContainerHeight + 'px';
-            }
-            _this.tableHeight = wrapHeight - decTableHeight;
-            return _this.tableHeight;
-        });
-    },
     getStorageItem (key, value = {}) {
         try {
             const data = localStorage.getItem(key) || value;
@@ -219,13 +117,5 @@ export default {
         } catch (error) {
             console.log(error);
         }
-    },
-    // 拿到appId的值，默认为蛋蛋
-    getId () {
-        const id = this.getStorageItem('appId', -1);
-        return id;
-    },
-    getTel () {
-        return this.getStorageItem('info', {}).ldap_account;
     }
 };
