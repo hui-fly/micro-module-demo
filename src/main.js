@@ -7,13 +7,10 @@ import routerMap from './router';
 import store from './store';
 import singleSpaVue from 'single-spa-vue';
 import util from '@/common/js/util';
-import mapi from './assets/js/mock';
+import mapi from '@/assets/js/mock';
 
 Vue.use(ElementUI);
 Vue.use(Router);
-Vue.prototype.$mapi = mapi;
-Vue.prototype.$util = util;
-
 const router = new Router(routerMap);
 
 if (BUILD_HOT) {
@@ -23,14 +20,21 @@ if (BUILD_HOT) {
         render: h => h(App)
     }).$mount('#app');
 }
-
 Vue.config.productionTip = false;
+
+Vue.mixin({
+    created() {
+        this.$mapi = mapi;
+        this.$util = util;
+    },
+})
 const vueLifecycles = singleSpaVue({
     Vue,
     appOptions: {
         router,
         store,
-        render: h => h(App)
+        render: h => h(App),
+        el:'#MICRO-APP'
     }
 });
 

@@ -4,13 +4,13 @@ export default {
     base: window.BASE_ROUTE,
     routes: [
         {
-            path: '/test',
-            redirect: '/test/list',
+            path: '/demo',
+            redirect: '/demo/list',
             component: List
         },
         {
             name: 'List',
-            path: '/test/list',
+            path: '/demo/list',
             component: List
         }
     ]

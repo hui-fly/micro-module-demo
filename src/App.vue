@@ -1,5 +1,5 @@
 <template>
-    <div id="test">
+    <div id="demo">
         <transition name="fade" mode="out-in">
             <router-view></router-view>
         </transition>
@@ -24,7 +24,7 @@ body {
     overflow: hidden;
 }
 
-#test {
+#demo {
     position: absolute;
     top: 0px;
     bottom: 0px;
