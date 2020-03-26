@@ -12,7 +12,13 @@ import mapi from '@/assets/js/mock';
 Vue.use(ElementUI);
 Vue.use(Router);
 const router = new Router(routerMap);
-
+Vue.config.productionTip = false;
+Vue.mixin({
+    created () {
+        this.$mapi = mapi;
+        this.$util = util;
+    }
+});
 if (BUILD_HOT) {
     new Vue({
         router,
@@ -20,21 +26,14 @@ if (BUILD_HOT) {
         render: h => h(App)
     }).$mount('#app');
 }
-Vue.config.productionTip = false;
 
-Vue.mixin({
-    created() {
-        this.$mapi = mapi;
-        this.$util = util;
-    },
-})
 const vueLifecycles = singleSpaVue({
     Vue,
     appOptions: {
         router,
         store,
         render: h => h(App),
-        el:'#MICRO-APP'
+        el: '#MICRO-APP'
     }
 });
 

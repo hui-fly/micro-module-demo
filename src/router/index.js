@@ -9,9 +9,9 @@ export default {
             component: List
         },
         {
-            name: 'List',
             path: '/demo/list',
-            component: List
+            component: List,
+            name: 'List'
         }
     ]
 };
