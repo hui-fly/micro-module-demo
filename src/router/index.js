@@ -1,10 +1,10 @@
 import List from '../views/List.vue';
 export default {
-    mode: 'history', // history 模式下, nginx 不配置的话, 浏览器刷新会404, 所以采用 hash
+    mode: 'history',
     base: window.BASE_ROUTE,
     routes: [
         {
-            path: '/demo',
+            path: '/demo', // 这个path与主项目中配置的router一致
             redirect: '/demo/list',
             component: List
         },

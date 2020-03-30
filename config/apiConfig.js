@@ -33,7 +33,7 @@ module.exports = {
             // 'default': '//api.perm.1sapp.com/'
         },
         YApi: {
-            'default': '//rd-yapi.qutoutiao.net/mock/'
+            'default': '//'
         },
         task: {
             'default': "http://qa-coin-services-task.qttcs3.cn/"
