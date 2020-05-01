@@ -1,7 +1,7 @@
 import List from '../views/List.vue';
 export default {
-    mode: 'history',
-    base: window.BASE_ROUTE || '/',
+    // mode: 'history',
+    // base: window.BASE_ROUTE || '/',
     routes: [
         {
             path: '/demo', // 这个path与主项目中配置的router一致

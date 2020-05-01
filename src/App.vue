@@ -1,6 +1,7 @@
 <template>
     <div id="demo">
         <transition name="fade" mode="out-in">
+            hhh
             <router-view></router-view>
         </transition>
     </div>

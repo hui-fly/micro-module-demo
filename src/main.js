@@ -8,7 +8,7 @@ import store from './store';
 import singleSpaVue from 'single-spa-vue';
 import util from '@/common/js/util';
 import mapi from '@/assets/js/mock';
-
+console.log(123);
 Vue.use(ElementUI);
 Vue.use(Router);
 const router = new Router(routerMap);
